@@ -1,0 +1,52 @@
+#include <AFMotor.h>
+AF_DCMotor motor1(1, MOTOR12_64KHZ);
+AF_DCMotor motor2(2, MOTOR12_64KHZ);
+
+int Leftsensor = A0;
+int Rightsensor = A1;
+int L_sensor_val = 0;
+int R_sensor_val = 0;
+int threshold = 500;
+
+void setup() 
+{
+  pinMode(Leftsensor, INPUT);   // Set sensor pins as input
+  pinMode(Rightsensor, INPUT);
+
+  motor1.setSpeed(150);
+  motor2.setSpeed(150);
+}
+
+void loop() 
+{
+  L_sensor_val = analogRead(Leftsensor);
+  R_sensor_val = analogRead(Rightsensor);
+
+  if (L_sensor_val > threshold && R_sensor_val > threshold) 
+  {     // Move forward
+  motor1.run(FORWARD);
+  motor2.run(FORWARD);
+  } 
+  else if (L_sensor_val < threshold && R_sensor_val < threshold) 
+  {    // Stop
+  motor1.run(BACKWARD);
+  motor2.run(BACKWARD);
+  } 
+  else if (L_sensor_val < threshold && R_sensor_val > threshold)
+  {    // Turn left
+  motor1.run(FORWARD);
+  motor2.run(RELEASE);
+  }
+  else if (L_sensor_val > threshold && R_sensor_val < threshold) 
+  {
+    // Turn right
+  motor1.run(RELEASE);
+  motor2.run(FORWARD);
+  }
+  else  
+  {
+    // Turn right
+  motor1.run(RELEASE);
+  motor2.run(RELEASE);
+  }
+}
